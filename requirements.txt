@@ -1,30 +1,7 @@
-# VishingGuard-ZSL — Python dependencies
-# Install with: pip install -r requirements.txt
-#
-# Tested on Python 3.12.
+# Gemini (current setup) needs no third-party package -- llm_engine.py
+# calls the Gemini REST API with Python's built-in urllib.
+# Everything below is optional, only needed if you switch providers later.
 
-# Required for the Groq API path (config.py's default provider for both
-# primary and fallback models). NOT required if you only ever run with
-# Gemini models (PRIMARY_MODEL/FALLBACK_MODEL set to a "gemini-*" name,
-# as this project currently is) -- llm_engine._call_gemini() talks to the
-# Gemini REST API with plain stdlib urllib, no SDK needed.
-groq==1.7.0
-
-# Optional -- only needed if you set FALLBACK_PROVIDER=openai in your .env
-# to use a paid gpt-4o-mini fallback instead of Groq's free models.
-# Uncomment if/when you switch that on:
-# openai>=1.0.0
-
-# Optional -- nicer test output. test_suite.py runs fine with plain
-# `python -m unittest test_suite -v` without this; uncomment if you'd
-# rather use `pytest test_suite.py -v`.
-# pytest>=7.0.0
-
-# NOTE: this project does NOT use python-dotenv -- config.py reads
-# environment variables directly via os.getenv(), it does not auto-load
-# a .env file. Before running anything, either:
-#   1. export the vars from .env into your shell yourself, e.g.:
-#        export $(grep -v '^#' .env | xargs)      (macOS/Linux)
-#   2. or install python-dotenv yourself and add a `load_dotenv()` call
-#      at the top of config.py (not done here since config.py's contents
-#      are intentionally left alone per current project decisions).
+groq==1.7.0        # only if PRIMARY_MODEL/FALLBACK_MODEL is switched to a Groq model
+openai>=1.0.0      # only if FALLBACK_PROVIDER=openai
+pytest>=7.0.0      # only if you want `pytest test_suite.py -v` instead of unittest
