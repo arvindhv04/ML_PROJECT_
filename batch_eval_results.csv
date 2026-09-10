@@ -1,0 +1,61 @@
+id,true_label,true_is_vishing,predicted_tier,predicted_is_vishing,fused_risk,llm_final_risk,model_used,retries,fallback_triggered,latency_seconds,error,correct
+VISHING_2731,1,True,Low,False,0.0,0.0,llama3-8b-8192,0,True,3.275,"NotFoundError: Error code: 404 - {'error': {'message': 'The model `llama-3.3-70b-versatile` does not exist or you do not have access to it.', 'type': 'invalid_request_error', 'code': 'model_not_found'}}",False
+BENIGN_362,0,False,Low,False,0.0,0.0,llama3-8b-8192,0,True,0.259,"NotFoundError: Error code: 404 - {'error': {'message': 'The model `llama-3.3-70b-versatile` does not exist or you do not have access to it.', 'type': 'invalid_request_error', 'code': 'model_not_found'}}",True
+BENIGN_1244,0,False,Low,False,0.0,0.0,llama3-8b-8192,0,True,0.305,"NotFoundError: Error code: 404 - {'error': {'message': 'The model `llama-3.3-70b-versatile` does not exist or you do not have access to it.', 'type': 'invalid_request_error', 'code': 'model_not_found'}}",True
+SYNTHETIC_SYN_0232,0,False,Low,False,0.0,0.0,llama3-8b-8192,0,True,0.56,"NotFoundError: Error code: 404 - {'error': {'message': 'The model `llama-3.3-70b-versatile` does not exist or you do not have access to it.', 'type': 'invalid_request_error', 'code': 'model_not_found'}}",True
+BENIGN_1756,0,False,Low,False,0.0,0.0,llama-3.3-70b-versatile,0,True,0.275,"BadRequestError: Error code: 400 - {'error': {'message': 'The model `llama3-8b-8192` has been decommissioned and is no longer supported. Please refer to https://console.groq.com/docs/deprecations for a recommendation on which model to use instead.', 'type': 'invalid_request_error', 'code': 'model_decommissioned'}}",True
+BENIGN_958,0,False,Low,False,0.0,0.0,llama3-8b-8192,0,True,0.317,"NotFoundError: Error code: 404 - {'error': {'message': 'The model `llama-3.3-70b-versatile` does not exist or you do not have access to it.', 'type': 'invalid_request_error', 'code': 'model_not_found'}}",True
+BENIGN_1120,0,False,Low,False,0.0,0.0,llama3-8b-8192,0,True,0.736,"NotFoundError: Error code: 404 - {'error': {'message': 'The model `llama-3.3-70b-versatile` does not exist or you do not have access to it.', 'type': 'invalid_request_error', 'code': 'model_not_found'}}",True
+BENIGN_2083,0,False,Low,False,0.0,0.0,llama3-8b-8192,0,True,0.272,"NotFoundError: Error code: 404 - {'error': {'message': 'The model `llama-3.3-70b-versatile` does not exist or you do not have access to it.', 'type': 'invalid_request_error', 'code': 'model_not_found'}}",True
+BENIGN_568,0,False,Low,False,0.0,0.0,llama3-8b-8192,0,True,0.767,"NotFoundError: Error code: 404 - {'error': {'message': 'The model `llama-3.3-70b-versatile` does not exist or you do not have access to it.', 'type': 'invalid_request_error', 'code': 'model_not_found'}}",True
+BENIGN_1332,0,False,Low,False,0.0,0.0,llama3-8b-8192,0,True,0.747,"NotFoundError: Error code: 404 - {'error': {'message': 'The model `llama-3.3-70b-versatile` does not exist or you do not have access to it.', 'type': 'invalid_request_error', 'code': 'model_not_found'}}",True
+BENIGN_1980,0,False,Low,False,0.0,0.0,llama3-8b-8192,0,True,0.289,"NotFoundError: Error code: 404 - {'error': {'message': 'The model `llama-3.3-70b-versatile` does not exist or you do not have access to it.', 'type': 'invalid_request_error', 'code': 'model_not_found'}}",True
+VISHING_2794,1,True,Low,False,0.0,0.0,llama3-8b-8192,0,True,0.261,"NotFoundError: Error code: 404 - {'error': {'message': 'The model `llama-3.3-70b-versatile` does not exist or you do not have access to it.', 'type': 'invalid_request_error', 'code': 'model_not_found'}}",False
+BENIGN_159,0,False,Low,False,0.0,0.0,llama3-8b-8192,0,True,0.754,"NotFoundError: Error code: 404 - {'error': {'message': 'The model `llama-3.3-70b-versatile` does not exist or you do not have access to it.', 'type': 'invalid_request_error', 'code': 'model_not_found'}}",True
+BENIGN_1666,0,False,Low,False,0.0,0.0,llama3-8b-8192,0,True,0.342,"NotFoundError: Error code: 404 - {'error': {'message': 'The model `llama-3.3-70b-versatile` does not exist or you do not have access to it.', 'type': 'invalid_request_error', 'code': 'model_not_found'}}",True
+BENIGN_99,0,False,Low,False,0.0,0.0,llama3-8b-8192,0,True,0.292,"NotFoundError: Error code: 404 - {'error': {'message': 'The model `llama-3.3-70b-versatile` does not exist or you do not have access to it.', 'type': 'invalid_request_error', 'code': 'model_not_found'}}",True
+BENIGN_1583,0,False,Low,False,0.0,0.0,llama3-8b-8192,0,True,0.559,"NotFoundError: Error code: 404 - {'error': {'message': 'The model `llama-3.3-70b-versatile` does not exist or you do not have access to it.', 'type': 'invalid_request_error', 'code': 'model_not_found'}}",True
+BENIGN_586,0,False,Low,False,0.0,0.0,llama3-8b-8192,0,True,0.576,"NotFoundError: Error code: 404 - {'error': {'message': 'The model `llama-3.3-70b-versatile` does not exist or you do not have access to it.', 'type': 'invalid_request_error', 'code': 'model_not_found'}}",True
+VISHING_2355,1,True,Low,False,0.0,0.0,llama3-8b-8192,0,True,0.239,"NotFoundError: Error code: 404 - {'error': {'message': 'The model `llama-3.3-70b-versatile` does not exist or you do not have access to it.', 'type': 'invalid_request_error', 'code': 'model_not_found'}}",False
+VISHING_2915,1,True,Low,False,0.0,0.0,llama3-8b-8192,0,True,0.315,"NotFoundError: Error code: 404 - {'error': {'message': 'The model `llama-3.3-70b-versatile` does not exist or you do not have access to it.', 'type': 'invalid_request_error', 'code': 'model_not_found'}}",False
+VISHING_2795,1,True,Low,False,0.0,0.0,llama3-8b-8192,0,True,0.457,"NotFoundError: Error code: 404 - {'error': {'message': 'The model `llama-3.3-70b-versatile` does not exist or you do not have access to it.', 'type': 'invalid_request_error', 'code': 'model_not_found'}}",False
+VISHING_2731,1,True,Moderate,True,0.485,0.85,openai/gpt-oss-20b,1,False,5.378,,True
+BENIGN_362,0,False,Low,False,0.0,0.0,openai/gpt-oss-20b,0,False,1.09,,True
+BENIGN_1244,0,False,Low,False,0.0,0.0,openai/gpt-oss-20b,0,False,29.137,,True
+SYNTHETIC_SYN_0232,0,False,Low,False,0.0,0.0,openai/gpt-oss-20b,0,False,13.078,,True
+BENIGN_1756,0,False,Low,False,0.0,0.0,openai/gpt-oss-120b,0,False,1.385,,True
+BENIGN_958,0,False,Low,False,0.0,0.0,openai/gpt-oss-20b,0,False,29.352,,True
+BENIGN_1120,0,False,Low,False,0.0,0.0,openai/gpt-oss-20b,0,False,27.588,,True
+BENIGN_2083,0,False,Low,False,0.0,0.0,openai/gpt-oss-20b,0,False,25.206,,True
+BENIGN_568,0,False,Low,False,0.0,0.0,openai/gpt-oss-20b,0,False,20.808,,True
+BENIGN_1332,0,False,Low,False,0.0,0.0,openai/gpt-oss-20b,0,False,20.933,,True
+BENIGN_1980,0,False,Low,False,0.0,0.0,openai/gpt-oss-20b,0,False,27.325,,True
+VISHING_2794,1,True,Low,False,0.03,0.1,openai/gpt-oss-20b,1,False,23.755,,False
+BENIGN_159,0,False,Low,False,0.0,0.0,openai/gpt-oss-20b,0,False,32.481,,True
+BENIGN_1666,0,False,Low,False,0.0,0.0,openai/gpt-oss-20b,0,False,34.419,,True
+BENIGN_99,0,False,Low,False,0.0,0.0,openai/gpt-oss-20b,0,False,27.601,,True
+BENIGN_1583,0,False,Low,False,0.0,0.0,openai/gpt-oss-20b,0,False,28.342,,True
+BENIGN_586,0,False,Low,False,0.0,0.0,openai/gpt-oss-20b,0,False,21.162,,True
+VISHING_2355,1,True,Low,False,0.135,0.6,openai/gpt-oss-120b,0,True,20.081,,False
+VISHING_2915,1,True,Low,False,0.21,0.6,openai/gpt-oss-120b,0,True,22.41,,False
+VISHING_2795,1,True,Low,False,0.0,0.0,openai/gpt-oss-20b,0,True,28.131,SchemaValidationError: Missing required key: 'final_risk'; Missing required key: 'overall_explanation'; Missing required key: 'reasoning_trace',False
+VISHING_2731,1,True,Low,False,0.385,0.85,openai/gpt-oss-20b,0,False,2.248,,False
+BENIGN_362,0,False,Low,False,0.0,0.0,openai/gpt-oss-20b,0,False,0.896,,True
+BENIGN_1244,0,False,Low,False,0.0,0.0,openai/gpt-oss-20b,0,False,5.007,,True
+SYNTHETIC_SYN_0232,0,False,Low,False,0.0,0.0,openai/gpt-oss-20b,0,False,12.75,,True
+BENIGN_1756,0,False,Low,False,0.0,0.05,openai/gpt-oss-120b,0,False,1.279,,True
+BENIGN_958,0,False,Low,False,0.0,0.0,openai/gpt-oss-20b,0,False,27.127,,True
+BENIGN_1120,0,False,Low,False,0.0,0.0,openai/gpt-oss-20b,0,False,32.458,,True
+BENIGN_2083,0,False,Low,False,0.0,0.0,openai/gpt-oss-20b,0,False,19.117,,True
+BENIGN_568,0,False,Low,False,0.0,0.0,openai/gpt-oss-20b,0,False,19.041,,True
+BENIGN_1332,0,False,Low,False,0.0,0.0,openai/gpt-oss-20b,0,False,16.037,,True
+BENIGN_1980,0,False,Low,False,0.0,0.0,openai/gpt-oss-20b,0,False,25.167,,True
+VISHING_2794,1,True,Low,False,0.0,0.0,openai/gpt-oss-20b,0,False,5.933,,False
+BENIGN_159,0,False,Low,False,0.0,0.0,openai/gpt-oss-20b,0,False,23.083,,True
+BENIGN_1666,0,False,Low,False,0.0,0.0,openai/gpt-oss-20b,0,False,33.186,,True
+BENIGN_99,0,False,Low,False,0.0,0.0,openai/gpt-oss-20b,0,False,29.352,,True
+BENIGN_1583,0,False,Low,False,0.0,0.0,openai/gpt-oss-20b,0,False,26.785,,True
+BENIGN_586,0,False,Low,False,0.0,0.0,openai/gpt-oss-20b,0,False,15.228,,True
+VISHING_2355,1,True,Low,False,0.272,0.35,openai/gpt-oss-20b,0,False,6.566,,False
+VISHING_2915,1,True,Low,False,0.272,0.6,openai/gpt-oss-20b,0,False,9.258,,False
+VISHING_2795,1,True,Low,False,0.0,0.1,openai/gpt-oss-20b,0,False,13.232,,False
