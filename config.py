@@ -8,8 +8,11 @@ hardcoded. Copy `.env.example` to `.env` and fill in your keys, or export
 the variables in your shell before running.
 
 Required environment variables:
-    GROQ_API_KEY    - API key for Groq (Llama 3 8B, free tier)
-    OPENAI_API_KEY  - API key for OpenAI (GPT-4o-mini fallback)
+    GROQ_API_KEY    - API key for Groq (free tier; powers both primary and
+                      fallback models by default -- see "Model names" below
+                      for why these are no longer literally Llama 3 models)
+    OPENAI_API_KEY  - API key for OpenAI (only needed if FALLBACK_PROVIDER=openai,
+                      e.g. to use the paid GPT-4o-mini fallback)
 
 Optional environment variables (all have sane defaults below):
     PRIMARY_MODEL, FALLBACK_MODEL, LLM_TEMPERATURE, MAX_TOKENS,

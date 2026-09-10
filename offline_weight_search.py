@@ -30,14 +30,20 @@ ATTRIBUTES = [
 ]
 
 # Current production weights (config.py), for baseline comparison.
+# NOTE: keep this in sync with config.Settings.fusion_weights by hand --
+# it's a plain constant here (not imported from config) so this script can
+# compare *candidate* weights against whatever was actually in production
+# for a given historical batch_eval_results.csv run, even after config.py
+# has since moved on. Last synced 2026-09-09 against config.py's post-
+# grid-search update (see prompt_documentation.md's "Fusion weight note").
 CURRENT_WEIGHTS = {
     "information_sensitivity": 0.25,
-    "urgency": 0.25,
-    "authority": 0.15,
+    "urgency": 0.18,
+    "authority": 0.22,
     "threat": 0.15,
-    "reward": 0.07,
-    "scarcity": 0.07,
-    "social_proof": 0.06,
+    "reward": 0.09,
+    "scarcity": 0.06,
+    "social_proof": 0.05,
 }
 
 # A few hand-picked alternatives worth comparing directly. Add your own here.
