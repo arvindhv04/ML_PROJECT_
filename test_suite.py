@@ -16,12 +16,13 @@ or, if pytest is available:
 """
 
 import json
+import os
 import unittest
 from unittest.mock import patch
 
 import prompt_framework as pf
 from llm_engine import LLMEngine, route_transcript, _extract_json, compute_fusion_risk, risk_tier
-from config import settings
+from config import settings, Settings
 
 
 VALID_PAYLOAD = {
@@ -209,19 +210,29 @@ class TestLLMEngine(unittest.TestCase):
             self.assertEqual(result["_meta"]["error"], "empty_transcript")
 
     def test_exception_on_primary_falls_back_to_other_model(self):
-        primary = settings.primary_model
-        fallback = settings.fallback_model
+        # Uses dataclasses.replace() to guarantee primary != fallback FOR
+        # THIS TEST, regardless of what your real .env has configured.
+        # (If your .env sets PRIMARY_MODEL == FALLBACK_MODEL -- e.g. running
+        # a single Gemini model for both -- fallback_triggered can never be
+        # True in real usage either, since there's no second model to escalate
+        # to. That's expected given that config, not a bug; this test just
+        # shouldn't depend on your local .env to prove the mechanism works.)
+        import dataclasses
+        fake_settings = dataclasses.replace(
+            settings, primary_model="test-primary-model", fallback_model="test-fallback-model"
+        )
 
         def side_effect(model_name, messages):
-            if model_name == primary:
+            if model_name == fake_settings.primary_model:
                 raise ConnectionError("simulated network failure")
             return json.dumps(VALID_PAYLOAD)
 
-        with patch.object(self.engine, "_call_model", side_effect=side_effect):
-            result = self.engine.analyze_transcript(BENIGN_SAMPLE)  # routes to primary normally
-            self.assertEqual(result["_meta"]["model_used"], fallback)
-            self.assertTrue(result["_meta"]["fallback_triggered"])
-            self.assertIsNone(result["_meta"]["error"])
+        with patch("llm_engine.settings", fake_settings):
+            with patch.object(self.engine, "_call_model", side_effect=side_effect):
+                result = self.engine.analyze_transcript(BENIGN_SAMPLE)  # routes to primary normally
+                self.assertEqual(result["_meta"]["model_used"], fake_settings.fallback_model)
+                self.assertTrue(result["_meta"]["fallback_triggered"])
+                self.assertIsNone(result["_meta"]["error"])
 
 
 class TestFusion(unittest.TestCase):
@@ -265,20 +276,37 @@ class TestConfig(unittest.TestCase):
     def test_thresholds_are_ordered(self):
         self.assertLess(settings.moderate_risk_threshold, settings.high_risk_threshold)
 
-    def test_model_names_match_current_defaults(self):
+    def test_default_model_names_match_documented_defaults(self):
+        # Tests config.py's hardcoded DEFAULTS (what a bare Settings() falls
+        # back to when PRIMARY_MODEL/FALLBACK_MODEL/FALLBACK_PROVIDER are
+        # unset) -- NOT the live `settings` singleton, which reflects
+        # whatever your own .env currently overrides (e.g. Gemini). Checking
+        # the live singleton here would make this test fail for anyone whose
+        # .env differs from the bare defaults, which defeats the point of
+        # having overridable config in the first place.
+        #
         # DEVIATION FROM ORIGINAL SPEC: the spec names "llama3-8b-8192"
         # (primary) and "gpt-4o-mini" (fallback) explicitly. Groq has since
         # moved llama3-8b-8192 and llama-3.3-70b-versatile to Enterprise-only,
         # so neither is reachable on the free tier anymore (see config.py's
         # "Model names" comment block). Both primary and fallback now default
         # to Groq's free-tier gpt-oss models instead; paid gpt-4o-mini remains
-        # available as an opt-in via FALLBACK_PROVIDER=openai. This test
-        # pins the CURRENT defaults so a future accidental change is caught --
+        # available as an opt-in via FALLBACK_PROVIDER=openai. This test pins
+        # those documented defaults so a future accidental change is caught --
         # flag the spec mismatch to whoever is grading/reviewing this rather
         # than reverting to model names that return 404s.
-        self.assertEqual(settings.primary_model, "openai/gpt-oss-20b")
-        self.assertEqual(settings.fallback_model, "openai/gpt-oss-120b")
-        self.assertEqual(settings.fallback_provider, "groq")
+        env_keys = ("PRIMARY_MODEL", "FALLBACK_MODEL", "FALLBACK_PROVIDER")
+        saved = {k: os.environ.pop(k, None) for k in env_keys}
+        try:
+            defaults = Settings()
+        finally:
+            for k, v in saved.items():
+                if v is not None:
+                    os.environ[k] = v
+
+        self.assertEqual(defaults.primary_model, "openai/gpt-oss-20b")
+        self.assertEqual(defaults.fallback_model, "openai/gpt-oss-120b")
+        self.assertEqual(defaults.fallback_provider, "groq")
 
 
 if __name__ == "__main__":
