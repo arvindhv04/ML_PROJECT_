@@ -2,6 +2,6 @@
 # calls the Gemini REST API with Python's built-in urllib.
 # Everything below is optional, only needed if you switch providers later.
 
-groq==1.7.0        # only if PRIMARY_MODEL/FALLBACK_MODEL is switched to a Groq model
+groq==1.0.0        # only if PRIMARY_MODEL/FALLBACK_MODEL is switched to a Groq model
 openai>=1.0.0      # only if FALLBACK_PROVIDER=openai
 pytest>=7.0.0      # only if you want `pytest test_suite.py -v` instead of unittest
