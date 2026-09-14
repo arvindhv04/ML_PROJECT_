@@ -35,3 +35,8 @@ Thumbs.db
 
 # --- Logs ---
 *.log
+logs/
+
+# --- Member 3 local artifacts ---
+chroma_db/
+adversarial_testset.json
