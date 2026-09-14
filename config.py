@@ -23,6 +23,11 @@ Optional environment variables (all have sane defaults below):
 import os
 from dataclasses import dataclass, field
 
+from dotenv import load_dotenv
+
+
+load_dotenv()
+
 
 def _env_float(name: str, default: float) -> float:
     val = os.getenv(name)
@@ -166,10 +171,21 @@ class Settings:
     def validate(self) -> None:
         """Raise a clear error early if required secrets/config are missing or malformed."""
         problems = []
-        if not self.groq_api_key:
-            problems.append("GROQ_API_KEY is not set (required — both the primary and free fallback models run on Groq).")
-        if self.fallback_provider == "openai" and not self.openai_api_key:
-            problems.append("FALLBACK_PROVIDER is 'openai' but OPENAI_API_KEY is not set.")
+        primary_is_gemini = "gemini" in self.primary_model.lower()
+        fallback_is_gemini = "gemini" in self.fallback_model.lower()
+
+        if primary_is_gemini or fallback_is_gemini:
+            if not self.gemini_api_key:
+                problems.append("GEMINI_API_KEY is not set but a Gemini model is configured.")
+
+        if not primary_is_gemini and not self.groq_api_key:
+            problems.append("GROQ_API_KEY is not set but the primary model is configured for Groq.")
+
+        if not fallback_is_gemini:
+            if self.fallback_provider == "openai" and not self.openai_api_key:
+                problems.append("FALLBACK_PROVIDER is 'openai' but OPENAI_API_KEY is not set.")
+            elif self.fallback_provider == "groq" and not self.groq_api_key:
+                problems.append("GROQ_API_KEY is not set but the fallback model is configured for Groq.")
         if abs(sum(self.fusion_weights.values()) - 1.0) > 1e-6:
             problems.append(f"fusion_weights must sum to 1.0, got {sum(self.fusion_weights.values())}")
         if not (0.0 <= self.moderate_risk_threshold < self.high_risk_threshold <= 1.0):
@@ -188,4 +204,3 @@ if __name__ == "__main__":
         print("Config OK.")
     except ValueError as e:
         print(e)
-    print(settings)
