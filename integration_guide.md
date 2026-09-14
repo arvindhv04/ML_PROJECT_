@@ -107,6 +107,8 @@ def analyze(req: TranscriptRequest):
 
 This module's output feeds into Member 3's RAG verification step next. Pass the full dict (including `_meta`) through — Member 3's step may want `reasoning_trace` and per-attribute `evidence` for cross-checking against retrieved reference cases.
 
+**Member 3 wiring (sanitize → this engine → RAG):** see `member3_integration_guide.md`. Call `sanitize_transcript()` *before* `analyze_transcript()`, and `verify_decision(llm_result, clean_transcript)` *after*. Do not send a sanitization `None` (flagged input) into this engine.
+
 ## 7. Performance expectations
 
 - Target average latency: **under 2 seconds** per transcript. Both models run on Groq's LPU hardware (very fast); the ~10-20% of transcripts routed to the larger `gpt-oss-120b` fallback will be somewhat slower than the 20b primary model, but still free and still fast. gpt-oss models spend part of their budget on hidden reasoning (see `REASONING_EFFORT` above) — if latency creeps above 2s in practice, that setting is the first thing to check.
