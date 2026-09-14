@@ -1,7 +1,25 @@
-# Gemini (current setup) needs no third-party package -- llm_engine.py
-# calls the Gemini REST API with Python's built-in urllib.
-# Everything below is optional, only needed if you switch providers later.
+# ============================================================
+# VishingGuard-ZSL — combined requirements (Member 2 + Member 3)
+# $0 cost: everything here is free-tier / local. No paid APIs required.
+# ============================================================
 
-groq==1.0.0        # only if PRIMARY_MODEL/FALLBACK_MODEL is switched to a Groq model
-openai>=1.0.0      # only if FALLBACK_PROVIDER=openai
-pytest>=7.0.0      # only if you want `pytest test_suite.py -v` instead of unittest
+# ---- Member 3 (Security & Adversarial Lead) — REQUIRED ----
+# Local vector DB + local embeddings, powers vector_store.py / rag_verification.py.
+chromadb>=0.5.0
+sentence-transformers>=2.2.2
+# sentence-transformers pulls in torch as a transitive dependency; first
+# import of vector_store.py also downloads the all-MiniLM-L6-v2 weights
+# (~80MB) into the local HF cache once, then runs fully offline.
+
+# ---- Member 2 (LLM engine) ----
+# Gemini (current default) needs no extra package -- llm_engine.py calls
+# the Gemini REST API with Python's built-in urllib. The two packages
+# below are only needed if PRIMARY_MODEL/FALLBACK_MODEL is switched back
+# to a Groq or OpenAI model name (see config.py / integration_guide.md).
+python-dotenv>=1.0.0
+groq==1.0.0         # only if PRIMARY_MODEL/FALLBACK_MODEL is a Groq model
+openai>=1.0.0       # only if FALLBACK_PROVIDER=openai
+
+# ---- Dev/test tooling (optional) ----
+pytest>=7.0.0       # only if you prefer `pytest security_test_suite.py -v`
+                     # over `python -m unittest security_test_suite -v`
