@@ -19,8 +19,11 @@ Return dict always contains:
 
 from __future__ import annotations
 
+import argparse
+import json
 import logging
 import os
+import sys
 from typing import Any, Dict, List, Optional
 
 from vector_store import VectorStore, get_default_store
@@ -96,11 +99,21 @@ def _evidence_vote(neighbors: List[Dict[str, Any]]) -> Optional[bool]:
     return None
 
 
+def ensure_store_loaded(store: Optional[VectorStore] = None, csv_path: str = "final_dataset_m16.csv") -> VectorStore:
+    """Ensure a usable vector store is available; populate it if it is empty."""
+    store = store or _shared_store()
+    if store.count() == 0:
+        logger.info("Vector store is empty; populating from %s", csv_path)
+        store.populate_from_csv(csv_path=csv_path, reset=False)
+    return store
+
+
 def verify_decision(
     llm_result: Dict[str, Any],
     transcript: str,
     store: Optional[VectorStore] = None,
     n_results: int = TOP_K,
+    csv_path: str = "final_dataset_m16.csv",
 ) -> Dict[str, Any]:
     """
     Compare Member 2's JSON result against nearest stored patterns.
@@ -112,7 +125,7 @@ def verify_decision(
         LLM benign  + retrieved vishing -> FLAG_FOR_REVIEW
         not enough similar neighbours   -> FLAG_FOR_REVIEW
     """
-    store = store or _shared_store()
+    store = ensure_store_loaded(store, csv_path=csv_path)
     retrieved = store.query_similar(transcript or "", n_results=n_results)
     neighbors = _usable_neighbors(retrieved)
     llm_vishing = llm_says_vishing(llm_result or {})
@@ -192,7 +205,7 @@ def verify_decision(
 
 
 def attach_verification(llm_result: Dict[str, Any], verification: Dict[str, Any]) -> Dict[str, Any]:
-    """Merge RAG fields onto Member 2's dict so Member 4 returns one JSON object."""
+    """Merge RAG fields onto the LLM's dict so the final result is a single JSON object."""
     merged = dict(llm_result or {})
     merged["fused_risk"] = verification["adjusted_fused_risk"]
     merged["risk_tier"] = verification["adjusted_risk_tier"]
@@ -208,6 +221,108 @@ def attach_verification(llm_result: Dict[str, Any], verification: Dict[str, Any]
     return merged
 
 
+def run_rag_verification(
+    llm_result: Dict[str, Any],
+    transcript: str,
+    store: Optional[VectorStore] = None,
+    n_results: int = TOP_K,
+    csv_path: str = "final_dataset_m16.csv",
+) -> Dict[str, Any]:
+    """Standalone verification entrypoint for this project without Member 4."""
+    verification = verify_decision(llm_result, transcript, store=store, n_results=n_results, csv_path=csv_path)
+    return attach_verification(llm_result, verification)
+
+
+def _load_json_arg(raw: Optional[str]) -> Dict[str, Any]:
+    if raw is None or raw == "":
+        return {}
+    if os.path.exists(raw):
+        with open(raw, "r", encoding="utf-8") as fh:
+            return json.load(fh)
+    try:
+        return json.loads(raw)
+    except json.JSONDecodeError as exc:
+        raise ValueError(f"Could not parse JSON input: {raw}") from exc
+
+
+def _load_transcript_from_csv(csv_path: str, row_index: int = 0) -> str:
+    """Read the transcript from final_dataset_m16.csv (or another CSV file) by row index."""
+    with open(csv_path, "r", encoding="utf-8-sig", newline="") as fh:
+        import csv
+        rows = list(csv.DictReader(fh))
+    if not rows:
+        raise ValueError(f"CSV file {csv_path} is empty")
+    if row_index < 0:
+        row_index = 0
+    if row_index >= len(rows):
+        row_index = len(rows) - 1
+    transcript = (rows[row_index].get("transcript") or "").strip()
+    if not transcript:
+        raise ValueError(f"Row {row_index} in {csv_path} does not include a transcript")
+    return transcript
+
+
+def _read_interactive_transcript() -> str:
+    """Read a pasted transcript until the user enters an empty line."""
+    print("Paste the call transcript below.")
+    print("Press Enter on an empty line when you are finished.")
+    lines: List[str] = []
+    while True:
+        try:
+            line = input()
+        except EOFError:
+            break
+        if not line.strip():
+            break
+        lines.append(line)
+    transcript = "\n".join(lines).strip()
+    if not transcript:
+        raise ValueError("No transcript was entered.")
+    return transcript
+
+
+def _analyze_transcript(transcript: str) -> Dict[str, Any]:
+    """Run the project's LLM scorer when no precomputed result is supplied."""
+    from llm_engine import LLMEngine
+
+    return LLMEngine().analyze_transcript(transcript)
+
+
+def _build_cli() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(
+        description="Paste a call transcript to analyze it with LLM scoring and RAG verification."
+    )
+    parser.add_argument("csv_path", nargs="?", default=None, help="Optional path to the CSV dataset. If omitted, final_dataset_m16.csv is used.")
+    parser.add_argument("--transcript", help="Transcript text. If omitted, interactive paste mode is used.")
+    parser.add_argument("--llm-result", help="Optional legacy JSON dict or path to JSON file for a precomputed LLM output.")
+    parser.add_argument("--llm-result-file", help="Alias for --llm-result.")
+    parser.add_argument("--csv", dest="csv_option", help="Alias for the CSV path.")
+    parser.add_argument("--top-k", type=int, default=TOP_K, help="Number of retrieved neighbours to inspect.")
+    parser.add_argument("--row-index", type=int, default=0, help="Row index to read from the CSV when --transcript is omitted.")
+    return parser
+
+
+def _normalize_cli_args(argv: List[str]) -> List[str]:
+    """Accept a pasted one-line shell continuation before an option."""
+    return ["--csv" if arg == " --csv" else arg for arg in argv]
+
+
 if __name__ == "__main__":
-    print("Load a store first: python vector_store.py --csv final_dataset_m16.csv")
-    print("Then call verify_decision(llm_result, transcript) from Member 4.")
+    parser = _build_cli()
+    args = parser.parse_args(_normalize_cli_args(sys.argv[1:]))
+
+    # Some users paste a line-continuation slash into a one-line command,
+    # where the shell passes it as a literal positional argument.
+    positional_csv = None if args.csv_path in ("\\", "/") else args.csv_path
+    csv_path = positional_csv or args.csv_option or "final_dataset_m16.csv"
+    llm_payload = args.llm_result or args.llm_result_file
+    if args.transcript:
+        transcript = args.transcript
+    elif llm_payload or positional_csv or args.csv_option:
+        transcript = _load_transcript_from_csv(csv_path, row_index=args.row_index)
+    else:
+        transcript = _read_interactive_transcript()
+
+    llm_result = _load_json_arg(llm_payload) if llm_payload else _analyze_transcript(transcript)
+    final = run_rag_verification(llm_result, transcript, n_results=args.top_k, csv_path=csv_path)
+    print(json.dumps(final, indent=2, ensure_ascii=False))
